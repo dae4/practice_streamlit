@@ -5,19 +5,21 @@ import random
 
 st.title("랜덤점심")
 
-members= [str(x) for x in range(0,50,1)]
+members= [str(x) for x in range(0,5,1)]
 
 empty = st.empty()
-target = []
+target = {}
 st.sidebar.title("휴가자는 체크해제")
 col1, col2 = st.beta_columns(2)
-for meber in members:
-    target.append(st.sidebar.checkbox(meber,True))
 
+for meber in members:
+    target[meber]=st.sidebar.checkbox(meber,True)
+temp=[]
 for i in target:
-    if i==False:
-        members.remove(members[i])
-        
+    if target[i]==False:
+        temp.append(target[i])
+
+mebers = temp
 try :
     person=int(st.text_input("배정인원을 넣어주세요"))
 
