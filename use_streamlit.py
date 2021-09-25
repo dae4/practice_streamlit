@@ -36,9 +36,9 @@ left_column, right_column = st.sidebar.columns(2)
 image = left_column.button('image')
 cam = right_column.button('webcam')
 
-st.write('You selected:', option)
-uploaded_file = st.file_uploader("Choose a Image")
+
 if image:
+    uploaded_file = st.file_uploader("Choose a Image")
     try:
         bytes_data = uploaded_file.getvalue()
         encoded_img = np.frombuffer(bytes_data, dtype = np.uint8)
@@ -47,26 +47,61 @@ if image:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         if option=='hands':
             results = hands.process(image)
-            for hand_landmarks in results.multi_hand_landmarks:
-                mp_drawing.draw_landmarks(
-                    image,
-                    hand_landmarks,
-                    mp_hands.HAND_CONNECTIONS,
-                    drawing_spec,
-                    drawing_spec)
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    mp_drawing.draw_landmarks(
+                        image,
+                        hand_landmarks,
+                        mp_hands.HAND_CONNECTIONS,
+                        drawing_spec,
+                        drawing_spec)
                     
         elif option=='face':
             results = face_mesh.process(image)
-            for face_landmarks in results.multi_face_landmarks:
-                mp_drawing.draw_landmarks(
-                image=image,
-                landmark_list=face_landmarks,
-                connections=mp_face_mesh.FACEMESH_TESSELATION,
-                landmark_drawing_spec=None,
-                connection_drawing_spec=drawing_spec)
+            if results.multi_face_landmarks:
+                for face_landmarks in results.multi_face_landmarks:
+                    mp_drawing.draw_landmarks(
+                    image=image,
+                    landmark_list=face_landmarks,
+                    connections=mp_face_mesh.FACEMESH_TESSELATION,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=drawing_spec)
         st.image(image,use_column_width=True)
     except:
         st.write("Not Found")
+elif cam:
+    FRAME_WINDOW = st.image([])
+    cam = cv2.VideoCapture(0)
+    stop=st.button('stop')
 
+    while True:
+        ret, frame = cam.read()
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
+
+        if option=='hands':
+            results = hands.process(image)
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    mp_drawing.draw_landmarks(
+                        image,
+                        hand_landmarks,
+                        mp_hands.HAND_CONNECTIONS,
+                        drawing_spec,
+                        drawing_spec)
+
+        elif option=='face':
+            results = face_mesh.process(image)
+            if results.multi_face_landmarks:
+                for face_landmarks in results.multi_face_landmarks:
+                    mp_drawing.draw_landmarks(
+                    image=image,
+                    landmark_list=face_landmarks,
+                    connections=mp_face_mesh.FACEMESH_TESSELATION,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=drawing_spec)
+        FRAME_WINDOW.image(image)
+        if stop:
+            cam=False
 else:
-    st.subheader("please push button")
+    st.subheader("please Select Mode")
