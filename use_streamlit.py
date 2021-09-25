@@ -73,35 +73,35 @@ elif cam:
     FRAME_WINDOW = st.image([])
     cam = cv2.VideoCapture(0)
     stop=st.button('stop')
-
     while True:
         ret, frame = cam.read()
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
+        if frame is None:
+            st.error("Please Check Webcam")
+        else:
+            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            if option=='hands':
+                results = hands.process(image)
+                if results.multi_hand_landmarks:
+                    for hand_landmarks in results.multi_hand_landmarks:
+                        mp_drawing.draw_landmarks(
+                            image,
+                            hand_landmarks,
+                            mp_hands.HAND_CONNECTIONS,
+                            drawing_spec,
+                            drawing_spec)
 
-        if option=='hands':
-            results = hands.process(image)
-            if results.multi_hand_landmarks:
-                for hand_landmarks in results.multi_hand_landmarks:
-                    mp_drawing.draw_landmarks(
-                        image,
-                        hand_landmarks,
-                        mp_hands.HAND_CONNECTIONS,
-                        drawing_spec,
-                        drawing_spec)
-
-        elif option=='face':
-            results = face_mesh.process(image)
-            if results.multi_face_landmarks:
-                for face_landmarks in results.multi_face_landmarks:
-                    mp_drawing.draw_landmarks(
-                    image=image,
-                    landmark_list=face_landmarks,
-                    connections=mp_face_mesh.FACEMESH_TESSELATION,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=drawing_spec)
-        FRAME_WINDOW.image(image)
-        if stop:
-            cam=False
+            elif option=='face':
+                results = face_mesh.process(image)
+                if results.multi_face_landmarks:
+                    for face_landmarks in results.multi_face_landmarks:
+                        mp_drawing.draw_landmarks(
+                        image=image,
+                        landmark_list=face_landmarks,
+                        connections=mp_face_mesh.FACEMESH_TESSELATION,
+                        landmark_drawing_spec=None,
+                        connection_drawing_spec=drawing_spec)
+            FRAME_WINDOW.image(image)
+            if stop:
+                cam=False
 else:
     st.subheader("please Select Mode")
