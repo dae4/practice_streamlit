@@ -9,7 +9,6 @@ st.title("Utils")
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-mp_drawing_styles = mp.solutions.drawing_styles
 mp_face_mesh = mp.solutions.face_mesh
 
 face_mesh = mp_face_mesh.FaceMesh(
@@ -17,15 +16,10 @@ face_mesh = mp_face_mesh.FaceMesh(
 drawing_spec = mp_drawing.DrawingSpec(color=(0,128,128), thickness=1, circle_radius=1)
 
 
-# For static images:
 hands = mp_hands.Hands(
     static_image_mode=True,
     max_num_hands=2,
     min_detection_confidence=0.5)
-# # For webcam input:
-# hands = mp_hands.Hands(
-#     min_detection_confidence=0.5, min_tracking_confidence=0.5)
-
 
 
 option = st.sidebar.selectbox('Please select mode!',
@@ -36,7 +30,7 @@ left_column, right_column = st.sidebar.columns(2)
 image = left_column.button('image')
 cam = right_column.button('webcam')
 
-
+# For static images:
 if image:
     uploaded_file = st.file_uploader("Choose a Image")
     try:
@@ -69,6 +63,7 @@ if image:
         st.image(image,use_column_width=True)
     except:
         st.write("Not Found")
+# For Webcam:
 elif cam:
     FRAME_WINDOW = st.image([])
     cam = cv2.VideoCapture(0)
