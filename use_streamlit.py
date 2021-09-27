@@ -7,19 +7,6 @@ import numpy as np
 
 st.title("Utils")
 
-mp_drawing = mp.solutions.drawing_utils
-mp_hands = mp.solutions.hands
-mp_face_mesh = mp.solutions.face_mesh
-
-face_mesh = mp_face_mesh.FaceMesh(
-    min_detection_confidence=0.5, min_tracking_confidence=0.5)
-drawing_spec = mp_drawing.DrawingSpec(color=(0,128,128), thickness=1, circle_radius=1)
-
-
-hands = mp_hands.Hands(
-    static_image_mode=True,
-    max_num_hands=2,
-    min_detection_confidence=0.5)
 
 
 option = st.sidebar.selectbox('Please select mode!',
@@ -29,6 +16,22 @@ st.sidebar.write("Please select source")
 left_column, right_column = st.sidebar.columns(2)
 image = left_column.button('image')
 cam = right_column.button('webcam')
+
+
+detection_conf = st.sidebar.slider("confidence",min_value = 0.0,max_value = 1.0,step=0.1)
+mp_drawing = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands
+mp_face_mesh = mp.solutions.face_mesh
+
+face_mesh = mp_face_mesh.FaceMesh(
+    min_detection_confidence=detection_conf, min_tracking_confidence=0.5)
+drawing_spec = mp_drawing.DrawingSpec(color=(0,128,128), thickness=1, circle_radius=1)
+
+
+hands = mp_hands.Hands(
+    static_image_mode=True,
+    max_num_hands=2,
+    min_detection_confidence=detection_conf)
 
 # For static images:
 if image:
