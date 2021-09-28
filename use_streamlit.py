@@ -20,7 +20,14 @@ cam = right_column.button('webcam')
 
 detection_conf = st.sidebar.slider("confidence",min_value = 0.0,max_value = 1.0,step=0.1)
 mp_drawing = mp.solutions.drawing_utils
+
+
 mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(
+    static_image_mode=True,
+    max_num_hands=2,
+    min_detection_confidence=detection_conf)
+
 mp_face_mesh = mp.solutions.face_mesh
 
 face_mesh = mp_face_mesh.FaceMesh(
@@ -28,11 +35,10 @@ face_mesh = mp_face_mesh.FaceMesh(
 drawing_spec = mp_drawing.DrawingSpec(color=(0,128,128), thickness=1, circle_radius=1)
 
 
-hands = mp_hands.Hands(
-    static_image_mode=True,
-    max_num_hands=2,
-    min_detection_confidence=detection_conf)
 
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose(
+    min_detection_confidence=detection_conf, min_tracking_confidence=0.5)
 # For static images:
 if image:
     uploaded_file = st.file_uploader("Choose a Image")
@@ -63,7 +69,11 @@ if image:
                     connections=mp_face_mesh.FACEMESH_TESSELATION,
                     landmark_drawing_spec=None,
                     connection_drawing_spec=drawing_spec)
+        elif option=='pose':
+            st.error("please use webcam")
+        
         st.image(image,use_column_width=True)
+        
     except:
         st.write("Not Found")
 # For Webcam:
@@ -98,6 +108,13 @@ elif cam:
                         connections=mp_face_mesh.FACEMESH_TESSELATION,
                         landmark_drawing_spec=None,
                         connection_drawing_spec=drawing_spec)
+
+            elif option == 'pose':
+                results = pose.process(image)
+                image.flags.writeable = True
+                mp_drawing.draw_landmarks(
+                    image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
             FRAME_WINDOW.image(image)
             if stop:
                 cam=False
