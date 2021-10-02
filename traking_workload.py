@@ -2,7 +2,11 @@ import streamlit as st
 import pandas as pd
 import os
 
-worker = ['user1']
+worker = []
+
+user=st.text_input('Add user')
+
+worker.append(user)
 
 if os.path.isfile('test_csv_file.csv'):
     workload = pd.read_csv('test_csv_file.csv')
