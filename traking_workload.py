@@ -17,10 +17,8 @@ user = st.selectbox("worker",worker)
 daily_work=st.number_input('Enter a number')
 complete = st.button("Enter")
 
+workload=workload.append({user: daily_work}, ignore_index=True)
 
 if complete:
-    insert_data = {user:[daily_work]}
-    df_to_insert = pd.DataFrame(data=insert_data)
-    workload = workload.append(df_to_insert, ignore_index=True)
     table = st.table(workload)
     workload.to_csv('test_csv_file.csv')
