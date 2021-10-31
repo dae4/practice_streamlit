@@ -1,3 +1,5 @@
 ## practice_streamlit
 
-# streamlit run food_detection.pyg
+## Run streamlit
+# streamlit run (python script)
+# exaple :  streamlit run drawing_lots.py
